@@ -5,12 +5,10 @@ import { getCollection } from "astro:content";
 
 import MainLayout from "../../layouts/MainLayout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
+import { sortBlogArticlesByDate } from "../../utils";
 
-const allBlogArticles: CollectionEntry<"blog">[] = (
+const allBlogArticles: CollectionEntry<"blog">[] = sortBlogArticlesByDate(
   await getCollection("blog")
-).sort(
-  (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
-    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
 

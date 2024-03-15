@@ -7,13 +7,11 @@ import MainLayout from "../layouts/MainLayout.astro";
 import SearchForm from "../components/SearchForm.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import MostRecentArticle from "../components/MostRecentArticle.astro";
+import { sortBlogArticlesByDate } from "../utils";
 import { HOMEPAGE_ARTICLE_LIMIT } from "../constants";
 
-const allBlogArticles: CollectionEntry<"blog">[] = (
+const allBlogArticles: CollectionEntry<"blog">[] = sortBlogArticlesByDate(
   await getCollection("blog")
-).sort(
-  (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
-    b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 const mostRecentArticle: CollectionEntry<"blog"> = allBlogArticles[0];
 const otherArticles: CollectionEntry<"blog">[] = allBlogArticles.slice(1);
