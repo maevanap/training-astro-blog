@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import { getCollection } from "astro:content";
+
+import MainLayout from "../../layouts/MainLayout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import SearchForm from "../../components/SearchForm.astro";
+import { sortBlogArticlesByDate } from "../../utils";
+
+const query: string | null = Astro.url.searchParams.get("query");
+
+const allArticles: CollectionEntry<"blog">[] = await getCollection("blog");
+
+const searchResults: CollectionEntry<"blog">[] = allArticles.filter(
+  (article) => {
+    const titleMatch: boolean = article.data.title
+      .toLowerCase()
+      .includes(query!.toLocaleLowerCase());
+    const contentMatch: boolean = article.body
+      .toLowerCase()
+      .includes(query!.toLocaleLowerCase());
+    const slugMatch: boolean = article.slug
+      .toLowerCase()
+      .includes(query!.toLocaleLowerCase());
+
+    return titleMatch || contentMatch || slugMatch;
+  }
+);
+const searchResultsSorted: CollectionEntry<"blog">[] =
+  sortBlogArticlesByDate(searchResults);
+---
+
+<MainLayout title="Search">
+  <a
+    href="/articles"
+    class="inline-block bg-gray-100 p-2 mb-5 hover:bg-indigo-500 hover:text-white"
+    >All Articles</a
+  >
+  <SearchForm />
+  <br />
+
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {searchResultsSorted.map((result) => <ArticleCard article={result} />)}
+  </div>
+</MainLayout>
